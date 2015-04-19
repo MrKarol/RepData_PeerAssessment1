@@ -1,6 +1,6 @@
 ---
 title: "Coursera, Data Science, Reproducible REsearch, Assignment 1"
-author: "Karol Dorniak"
+author: "MrKarol"
 date: "Saturday, April 19, 2015"
 output: html_document
 ---

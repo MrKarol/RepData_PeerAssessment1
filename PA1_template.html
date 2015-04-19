@@ -212,7 +212,21 @@ hr {
 <p>Data for this assignement should be located in the same directory where RMardown file is. The below R code unzips data and loads it into R.</p>
 
 <pre><code class="r">library(dplyr)
-library(ggplot2)
+</code></pre>
+
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+</code></pre>
+
+<pre><code class="r">library(ggplot2)
 
 unzip(&quot;repdata-data-activity.zip&quot;)
 Activity &lt;- read.csv(&quot;activity.csv&quot;)

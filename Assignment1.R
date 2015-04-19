@@ -21,6 +21,8 @@ print.data.frame(
             MedianOfTotalNumOfStepsPerDay = median(NumOfSteps)
            )
 )
+cat("Mean: ",toString(t1 %>% summarise(MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps))))
+cat("Median: ",toString(t1 %>% summarise(MedianOfTotalNumOfStepsPerDay = median(NumOfSteps))))
 
 #t2 contains avg number of steps per interval
 t2 <- Activity %>% group_by(interval) %>% summarise(AvgNumOfSteps=mean(steps,na.rm=TRUE))
@@ -34,10 +36,12 @@ interval_with_highest_avg <- max(t2$AvgNumOfSteps)
 print.data.frame(
     t2 %>% filter(AvgNumOfSteps==interval_with_highest_avg)
 )
+cat('Interval with highest average: ',toString((t2 %>% filter(AvgNumOfSteps==interval_with_highest_avg))[1]))
 
 print.data.frame(
     Activity %>% filter(is.na(steps)) %>% summarise(MissingValues=n())
 )
+cat('Number of missing values: ',toString((Activity %>% filter(is.na(steps)) %>% summarise(MissingValues=n()))))
 
 Activity2 <- Activity %>% filter(is.na(steps)) 
 Activity2 <- left_join(Activity2,t2)
@@ -56,6 +60,10 @@ print.data.frame(
         NAsPopulated_MedianOfTotalNumOfStepsPerDay = median(NumOfStepsCleaned)
     )
 )
+cat('Original data set mean: ', toString(t3 %>% summarise(Original_MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps))))
+cat('Original data set median: ', toString(t3 %>% summarise(Original_MedianOfTotalNumOfStepsPerDay = median(NumOfSteps))))
+cat('New data set mean: ', toString(t3 %>% summarise(NAsPopulated_MeanOfTotalNumOfStepsPerDay = mean(NumOfStepsCleaned))))
+cat('New data set median: ', toString(t3 %>% summarise(NAsPopulated_MedianOfTotalNumOfStepsPerDay = median(NumOfStepsCleaned))))
 
 t3 <- with(t3,
         data.frame(

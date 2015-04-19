@@ -34,14 +34,10 @@ f1 <- f1 + ylab(" total number of steps taken each day") + xlab("date")
 f1
 ```
 
-Calculate the mean (MeanOfTotalNumOfStepsPerDay) and median (MedianOfTotalNumOfStepsPerDay) total number of steps taken per day.
+Calculate the mean and median total number of steps taken per day.
 ```{r}
-print.data.frame(
-    t1 %>% summarise(
-            MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps),
-            MedianOfTotalNumOfStepsPerDay = median(NumOfSteps)
-           )
-)
+cat("Mean: ",toString(t1 %>% summarise(MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps))))
+cat("Median: ",toString(t1 %>% summarise(MedianOfTotalNumOfStepsPerDay = median(NumOfSteps))))
 ```
 
 ## What is the average daily activity pattern?
@@ -59,20 +55,17 @@ f2
 Find the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps. 
 ```{r}
 interval_with_highest_avg <- max(t2$AvgNumOfSteps)
-print.data.frame(
-    t2 %>% filter(AvgNumOfSteps==interval_with_highest_avg)
-)
+cat('Interval with the highest average: ',toString((t2 %>% filter(AvgNumOfSteps==interval_with_highest_avg))[1]))
 ```
 
 ## Inputing missing values
 Find the number of missing values in the steps field:
 ```{r}
-print.data.frame(
-    Activity %>% filter(is.na(steps)) %>% summarise(MissingValues=n())
-)
+cat('Number of missing values: ',toString((Activity %>% filter(is.na(steps)) %>% summarise(MissingValues=n()))))
+
 ```
 
-Populate missing values using average number of steps per interval across all days, example: interval 1255 for 2012-11-09 will have "steps" field populated with a number that is equal to average number of steps for interval 1255 across all days. Store the New data set, with missing values populated, under Activity2 data.frame. The variable steps holds original valuea whereas steps_cleaned holds the new values (no NAs).
+Populate missing values using average number of steps per interval across all days, example: interval 1255 for 2012-11-09 will have "steps" field populated with a number that is equal to average number of steps for interval 1255 across all days. Store the New data set, with missing values populated, under Activity2 data.frame. The variable "steps"" holds original value whereas "steps_cleaned" holds the new values (no NAs).
 ```{r}
 Activity2 <- Activity %>% filter(is.na(steps)) 
 Activity2 <- left_join(Activity2,t2)
@@ -82,21 +75,18 @@ Activity2 <- Activity2 %>% mutate(steps_cleaned = ifelse(is.na(steps),AvgNumOfSt
 Activity2 <- select(Activity2,date,interval,steps_cleaned,steps) 
 ```
 
-Calculated the mean (NAsPopulated_MeanOfTotalNumOfStepsPerDay) and median (NAsPopulated_MedianOfTotalNumOfStepsPerDay) total number of steps taken per day of the nNew data set and compare it to the mean and median of the Original data set (Original_MeanOfTotalNumOfStepsPerDay and Original_MedianOfTotalNumOfStepsPerDay). Note that the mean and median of the New data set are equal!
+Calculated the mean and median total number of steps taken per day of the New data set and compare it to the mean and median of the Original data set. Note that the mean and median of the New data set are equal!
 ```{r}
 t3 <- Activity2 %>% group_by(date) %>% summarise(NumOfSteps=sum(steps,na.rm=TRUE),NumOfStepsCleaned=sum(steps_cleaned))
 
-print.data.frame(
-    t3 %>% summarise(
-        Original_MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps),
-        Original_MedianOfTotalNumOfStepsPerDay = median(NumOfSteps),
-        NAsPopulated_MeanOfTotalNumOfStepsPerDay = mean(NumOfStepsCleaned),
-        NAsPopulated_MedianOfTotalNumOfStepsPerDay = median(NumOfStepsCleaned)
-    )
-)
+cat('Original data set mean: ', toString(t3 %>% summarise(Original_MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps))))
+cat('Original data set median: ', toString(t3 %>% summarise(Original_MedianOfTotalNumOfStepsPerDay = median(NumOfSteps))))
+cat('New data set mean: ', toString(t3 %>% summarise(NAsPopulated_MeanOfTotalNumOfStepsPerDay = mean(NumOfStepsCleaned))))
+cat('New data set median: ', toString(t3 %>% summarise(NAsPopulated_MedianOfTotalNumOfStepsPerDay = median(NumOfStepsCleaned))))
+
 ```
 
-The below histogram compares the total number of steps taken each day between the Original and New data sets. Note that if there is an Original data set bar then the New data set bar associated with that date will the have same height. Moreover, populating missing values introduced new bars for dates which do not have Original data set bar. This is very interesting results which are driven by the method used to populate missing values.
+The below histogram compares the total number of steps taken each day using the New data set and Original data set (for comparison purpose). Note that if there is an Original data set bar then the New data set bar associated with that date will have the same height. Moreover, populating missing values introduced new bars for dates which do not have Original data set bar. This is very interesting results which are driven by the method used to populate missing values.
 ```{r fig.width=12}
 t3 <- with(t3,
         data.frame(

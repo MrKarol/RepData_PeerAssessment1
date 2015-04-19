@@ -1,0 +1,84 @@
+---
+title: "Coursera, Data Science, Reproducible REsearch, Assignment 1"
+author: "Karol Dorniak"
+date: "Saturday, April 18, 2015"
+output: html_document
+---
+
+## Introduction
+It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement -- a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
+
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+
+## Loading Data
+Data for this assignement should be located in the same directory where RMardown file is. The below R code unzips data and loads it into R.
+
+```r
+library(dplyr)
+library(ggplot2)
+
+unzip("repdata-data-activity.zip")
+Activity <- read.csv("activity.csv")
+```
+
+## What is mean total number of steps taken per day?
+Create a histogram of the total number of steps taken each day.
+
+```r
+#t1 contains sum of number of steps per day
+t1 <- Activity %>% group_by(date) %>% summarise(NumOfSteps=sum(steps,na.rm=TRUE))
+
+#f1 is a histogram
+f1 <- ggplot(t1, aes(x = factor(date), y = NumOfSteps)) + geom_bar(stat="identity") 
+f1 <- f1 + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+f1 <- f1 + ylab(" total number of steps taken each day") + xlab("date")
+f1
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+Calculate the mean and median total number of steps taken per day.
+
+```r
+print.data.frame(
+    t1 %>% summarise(
+            MeanOfTotalNumOfStepsPerDay = mean(NumOfSteps),
+            MedianOfTotalNumOfStepsPerDay = median(NumOfSteps)
+           )
+)
+```
+
+```
+##   MeanOfTotalNumOfStepsPerDay MedianOfTotalNumOfStepsPerDay
+## 1                     9354.23                         10395
+```
+
+## What is the average daily activity pattern?
+Create a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).
+
+```r
+#t2 contains avg number of steps per interval
+t2 <- Activity %>% group_by(interval) %>% summarise(AvgNumOfSteps=mean(steps,na.rm=TRUE))
+
+f2 <- ggplot(t2, aes(interval,AvgNumOfSteps)) + geom_line() 
+f2 <- f2 + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+f2 <- f2 + ylab(" avergage number of steps per day across all days") + xlab("interval")
+f2
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+Find the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps. 
+
+```r
+interval_with_highest_avg <- max(t2$AvgNumOfSteps)
+print.data.frame(
+    t2 %>% filter(AvgNumOfSteps==interval_with_highest_avg)
+)
+```
+
+```
+##   interval AvgNumOfSteps
+## 1      835      206.1698
+```
